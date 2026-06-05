@@ -1,0 +1,65 @@
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# Python cache and virtual environments
+__pycache__/
+*/__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+ENV/
+
+# Jupyter/runtime cache
+.ipynb_checkpoints/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs and temporary files
+*.log
+logs/
+tmp/
+temp/
+*.tmp
+
+# Local databases and bulky raw files
+data/raw/
+data/beginner_market.db
+*.sqlite
+*.sqlite3
+
+# Keep deployable model artifacts, but exclude legacy oversized local fallback
+# Required and tracked:
+# - data/models/rag_faiss.index
+# - data/models/rag_faiss_metadata.csv
+# - data/models/trend_model.joblib
+data/models/rag_tfidf_index.joblib
+
+# Annual-report PDFs are raw/source artifacts; derived chunks are tracked instead
+*.pdf
+
+# Optional local notebooks/docs can stay out of the deployment repo
+notebooks/
+docs/
+
+# Local helper scripts not part of project runtime
+create-finance-commits.sh
+rebuild_clean_history.sh
+
+# Docker local state is not committed
+.docker/

@@ -1,0 +1,60 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: market_risk_postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-market_risk}
+      POSTGRES_USER: ${POSTGRES_USER:-market_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-market_password}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./sql/schema.sql:/docker-entrypoint-initdb.d/001_schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-market_user} -d ${POSTGRES_DB:-market_risk}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  loader:
+    build: .
+    container_name: market_risk_loader
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-market_user}:${POSTGRES_PASSWORD:-market_password}@postgres:5432/${POSTGRES_DB:-market_risk}
+      POSTGRES_LOAD_BATCH_SIZE: ${POSTGRES_LOAD_BATCH_SIZE:-500}
+      OMP_NUM_THREADS: ${OMP_NUM_THREADS:-1}
+      MKL_NUM_THREADS: ${MKL_NUM_THREADS:-1}
+      TOKENIZERS_PARALLELISM: "false"
+    command: ["python3", "scripts/load_postgres.py"]
+    restart: "no"
+
+  app:
+    build: .
+    container_name: market_risk_app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      loader:
+        condition: service_completed_successfully
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-market_user}:${POSTGRES_PASSWORD:-market_password}@postgres:5432/${POSTGRES_DB:-market_risk}
+      USE_POSTGRES: "true"
+      USE_POSTGRES_RAG: "true"
+      ALLOW_LOCAL_FALLBACK: "false"
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      GROQ_MODEL: ${GROQ_MODEL:-llama-3.1-8b-instant}
+      CROSS_ENCODER_MODEL: ${CROSS_ENCODER_MODEL:-cross-encoder/ms-marco-MiniLM-L6-v2}
+      CROSS_ENCODER_WEIGHT: ${CROSS_ENCODER_WEIGHT:-0.4}
+      OMP_NUM_THREADS: ${OMP_NUM_THREADS:-1}
+      MKL_NUM_THREADS: ${MKL_NUM_THREADS:-1}
+      TOKENIZERS_PARALLELISM: "false"
+      PYTHONUNBUFFERED: "1"
+    ports:
+      - "8501:8501"
+
+volumes:
+  postgres_data:

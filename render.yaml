@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: ai-market-risk-intelligence
+    env: docker
+    plan: starter
+    autoDeploy: false
+    envVars:
+      - key: GROQ_MODEL
+        value: llama-3.1-8b-instant
+      - key: PYTHONUNBUFFERED
+        value: "1"

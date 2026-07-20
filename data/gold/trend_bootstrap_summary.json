@@ -1,0 +1,7 @@
+{
+  "method": "trading_date_cluster_bootstrap",
+  "iterations": 300,
+  "macro_f1_mean": 0.3579122196601617,
+  "macro_f1_ci_95_lower": 0.3401646748813864,
+  "macro_f1_ci_95_upper": 0.3742901995966447
+}

@@ -1,0 +1,25 @@
+{
+  "benchmark_type": "candidate-derived annual-report hybrid page-hit benchmark",
+  "top_k": 5,
+  "automatic_dashboard_backend": "faiss_hybrid",
+  "automatic_fallback_rate": 0.0,
+  "results": [
+    {
+      "retrieval_backend": "faiss_hybrid",
+      "benchmark_queries": 20,
+      "page_hits": 11,
+      "page_hit_rate": 0.55,
+      "automatic_dashboard_backend": "faiss_hybrid",
+      "automatic_fallback_rate": 0.0
+    },
+    {
+      "retrieval_backend": "tfidf_hybrid_fallback",
+      "benchmark_queries": 20,
+      "page_hits": 10,
+      "page_hit_rate": 0.5,
+      "automatic_dashboard_backend": "faiss_hybrid",
+      "automatic_fallback_rate": 0.0
+    }
+  ],
+  "limitation": "Expected pages are derived from existing fundamentals candidates. This evaluates retrieval coverage, not answer faithfulness or universal RAG correctness."
+}
